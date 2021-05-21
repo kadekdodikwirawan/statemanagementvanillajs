@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .grid-container {
+          display: grid;
+          grid-template-columns: auto auto auto;
+        }
+        .grid-item {
+          padding: 2px;
+          font-size: 30px;
+          text-align: center;
+        }
+        .name >.grid-item{
+            border: 1px solid;
+        }
+        .toppings{
+            margin-left: 80px;
+        }
+        .toppings >.grid-item{
+            text-align: left;
+        }
+        input[type=radio] {
+            border: 0px;
+            width: 100%;
+            height: 2em;
+        }
+        input[type=checkbox]{
+            width: 10%;
+            height: 20px;
+        }
+        </style>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        const App = function _App() {
+          return `
+          <h2>Pizza</h2> <br>
+            <div class="grid-container name">
+                <div class="grid-item">
+                    <img src="./img/pizza1.jpg"> <br>
+                    <h3>Pizza name 1</h3>
+                    <span class="price">$8</span> <input onchange="selectedPizza(this)" ${ _App.state.pizzaSelected.name == 'pizza1' ? 'checked' : ''} data-name="pizza1" type="radio" name="pizza_price" value="8">
+                </div>
+                <div class="grid-item">
+                    <img src="./img/pizza2.png"> <br>
+                    <h3>Pizza name 2</h3>
+                    <span class="price">$10</span><input onchange="selectedPizza(this)" ${ _App.state.pizzaSelected.name == 'pizza2' ? 'checked' : ''} data-name="pizza2" type="radio" name="pizza_price" value="10">
+                </div>
+                <div class="grid-item">
+                    <img src="./img/pizza3.jpg"> <br>
+                    <h3>Pizza name 3</h3>
+                    <span class="price">$12</span><input onchange="selectedPizza(this)" ${ _App.state.pizzaSelected.name == 'pizza3' ? 'checked' : ''} data-name="pizza3"  type="radio" name="pizza_price" value="12">
+                </div>
+            </div>
+            <h2>Size</h2> <br>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <input onchange="selectSize(this)" type="radio" ${_App.state.size.name == 'S' ? 'checked': ''} name="size" value="S">
+                    <span>Small</span>
+                </div>
+                <div class="grid-item">
+                    <input onchange="selectSize(this)" type="radio" name="size" ${_App.state.size.name == 'M' ? 'checked': ''} value="M">
+                    <span>Meduim</span>
+                </div>
+                <div class="grid-item">
+                    <input onchange="selectSize(this)" type="radio" ${_App.state.size.name == 'L' ? 'checked': ''} name="size" value="L">
+                    <span>Large</span>
+                </div>
+            </div>
+            <h2>Toppings</h2><br>
+            <div id="toppings" class="grid-container toppings">
+            </div>
+            <h2>Price</h2>
+            <span id="total">$ ${totalpizzaPrice()}</span>
+          `;
+        };
+
+        App.state = {
+            pizzaSelected: {
+                name: '',
+                toppings: [],
+                price: 0
+            },
+            size: {
+                name: 'M',
+                value: 0
+            },
+            toppingsSelected: {
+                name : [],
+                toppingPrice: []
+            },
+            toppings :  [
+                {   name : 'Avocado',
+                    price: 1
+                },
+                {   name : 'Lobster',
+                    price: 2
+                },
+                {   name : 'Bacon',
+                    price: 3
+                },
+                {   name : 'Broccoli',
+                    price: 1
+                },
+                {   name : 'Oyster',
+                    price: 2
+                },
+                {   name : 'Duck',
+                    price: 3
+                },
+                {   name : 'Onions',
+                    price: 1
+                },
+                {   name : 'Salmon',
+                    price: 2
+                },
+                {   name : 'Ham',
+                    price: 3
+                },
+                {   name : 'Zucchini',
+                    price: 1
+                },
+                {   name : 'Tuna',
+                    price: 2
+                },
+                {   name : 'Sausage',
+                    price: 3
+                },
+            ],
+            setPizzaSelected: (name, toppings, price) =>{
+                setState(() => App.state.pizzaSelected = {
+                    name: name,
+                    toppings: toppings,
+                    price: price
+                })
+            },
+            setSize: (size) =>{
+                if(size == 'S'){
+                    setState(() => App.state.size = {
+                        name: 'S',
+                        value: -1
+                    })
+                }
+                if(size == 'M'){
+                    setState(() => App.state.size = {
+                        name: 'M',
+                        value: 0
+                    })
+                }
+                if(size == 'L'){
+                    setState(() => App.state.size = {
+                        name: 'L',
+                        value: 2
+                    })
+                }
+            },
+            settoppingSelected: (name, price)=>{
+                setState(() => App.state.toppingsSelected.name.push(name))
+                setState(() => App.state.toppingsSelected.toppingPrice.push(price))
+            },
+            setnewTopping: (name, price)=>{
+                setState(() => App.state.toppingsSelected.name = name)
+                setState(() => App.state.toppingsSelected.toppingPrice = price)
+            }
+        };
+
+        const setState = (callback) => {
+            callback();
+            updateApp();
+        }
+
+        const updateApp = () => {
+            document.getElementById("app").innerHTML = App();
+            document.getElementById("toppings").innerHTML = toppingsEl()
+        };
+
+        const toppingsEl = () =>{
+            const toppings = App.state.toppings
+            let datatopping = ''
+            for(i = 0; i < toppings.length; i++){
+                datatopping +=  `<div class="grid-item">
+                                    <input type="checkbox" onclick="selectTopping(this)"  ${App.state.pizzaSelected.toppings.includes(toppings[i].name) ? '' : 'disabled'}  class="datatoping" id="${toppings[i].name}" name="${toppings[i].name}" value="${toppings[i].name}" ${App.state.toppingsSelected.name.includes(toppings[i].name) ? 'checked' : ' '}   data-price="${toppings[i].price}"><label>${toppings[i].name}</label>
+                                </div>`
+             }
+            return datatopping
+        }
+        const selectedPizza = (e) =>{
+            var pizza1 = ["Avocado", "Broccoli","Onions","Zucchini","Tuna","Ham"]
+            var pizza2 = ["Broccoli","Onions","Zucchini","Lobster","Oyster","Salmon","Bacon","Ham"]
+            var pizza3 = ["Broccoli","Onions","Zucchini","Tuna","Bacon","Duck","Ham","Sausage"]
+            const price = e.value
+            const pizzaName = e.getAttribute('data-name')
+            const currentTopping = App.state.toppingsSelected.name ? App.state.toppingsSelected.name : []
+            const currentPrice = App.state.toppingsSelected.toppingPrice
+            const allToppings= App.state.toppings
+            switch(pizzaName){
+                case "pizza1":
+                    const new_name1 = currentTopping.filter((element) =>pizza1.includes(element));
+                    const new_price1 = []
+                    new_name1.forEach((e)=>{
+                        // console.log(e);
+                            var result = allToppings.filter(obj => {
+                                if(obj.name === e){
+                                    new_price1.push(obj.price);
+                                }
+                            })
+                    })
+                    App.state.setnewTopping(new_name1, new_price1)
+                    App.state.setPizzaSelected(pizzaName, pizza1, price)
+                    break
+                case "pizza2":
+                    const new_name2 = currentTopping.filter((element) =>pizza2.includes(element));
+                    const new_price2 = []
+                    new_name2.forEach((e)=>{
+                            var result = allToppings.filter(obj => {
+                                if(obj.name === e){
+                                    new_price2.push(obj.price);
+                                }
+                            })
+                    })
+                    App.state.setnewTopping(new_name2, new_price2)
+                    App.state.setPizzaSelected(pizzaName, pizza2, price)
+                    break
+                case "pizza3":
+                    const new_name3 = currentTopping.filter((element) =>pizza3.includes(element));
+                    const new_price3 = []
+                    new_name3.forEach((e)=>{
+                            var result = allToppings.filter(obj => {
+                                if(obj.name === e){
+                                    new_price3.push(obj.price);
+                                }
+                            })
+                    })
+                    App.state.setnewTopping(new_name3, new_price3)
+                    App.state.setPizzaSelected(pizzaName, pizza3, price)
+                    break
+            }
+
+        }
+        const selectSize = (e) =>{
+            const size = e.value
+            App.state.setSize(size)
+        }
+        const selectTopping =(e)=>{
+            const name = e.value
+            const price = e.getAttribute('data-price')
+            const currentTopping = App.state.toppingsSelected.name
+            const checked = e.getAttribute('checked')
+            if(checked === null){
+                App.state.settoppingSelected(name, price)
+            }else{
+                removeArray(currentTopping, name)
+            }
+        }
+        const removeArray = (array, item)=>{
+                    // get index of item to splice
+                    const indexof = array.indexOf(item);
+                    array.splice(indexof, 1);
+                    const arr_toppingPrice = App.state.toppingsSelected.toppingPrice
+                    arr_toppingPrice.splice(indexof, 1);
+
+                    App.state.setnewTopping(array, arr_toppingPrice)
+
+        }
+        const arraySum =(array)=>{
+           const total =  array.reduce((a, b) => parseInt(a) + parseInt(b), 0);
+           return total
+        }
+        const totalpizzaPrice =()=>{
+           return parseInt(App.state.pizzaSelected.price) + parseInt(App.state.size.value) + arraySum(App.state.toppingsSelected.toppingPrice)
+        }
+        updateApp();
+      </script>
+</body>
+</html>
