@@ -198,45 +198,22 @@
             const pizzaName = e.getAttribute('data-name')
             const currentTopping = App.state.toppingsSelected.name ? App.state.toppingsSelected.name : []
             const currentPrice = App.state.toppingsSelected.toppingPrice
-            const allToppings= App.state.toppings
             switch(pizzaName){
                 case "pizza1":
                     const new_name1 = currentTopping.filter((element) =>pizza1.includes(element));
-                    const new_price1 = []
-                    new_name1.forEach((e)=>{
-                        // console.log(e);
-                            var result = allToppings.filter(obj => {
-                                if(obj.name === e){
-                                    new_price1.push(obj.price);
-                                }
-                            })
-                    })
+                    const new_price1 = getNewprice(new_name1)
                     App.state.setnewTopping(new_name1, new_price1)
                     App.state.setPizzaSelected(pizzaName, pizza1, price)
                     break
                 case "pizza2":
                     const new_name2 = currentTopping.filter((element) =>pizza2.includes(element));
-                    const new_price2 = []
-                    new_name2.forEach((e)=>{
-                            var result = allToppings.filter(obj => {
-                                if(obj.name === e){
-                                    new_price2.push(obj.price);
-                                }
-                            })
-                    })
+                    const new_price2 = getNewprice(new_name2)
                     App.state.setnewTopping(new_name2, new_price2)
                     App.state.setPizzaSelected(pizzaName, pizza2, price)
                     break
                 case "pizza3":
                     const new_name3 = currentTopping.filter((element) =>pizza3.includes(element));
-                    const new_price3 = []
-                    new_name3.forEach((e)=>{
-                            var result = allToppings.filter(obj => {
-                                if(obj.name === e){
-                                    new_price3.push(obj.price);
-                                }
-                            })
-                    })
+                    const new_price3 = getNewprice(new_name3)
                     App.state.setnewTopping(new_name3, new_price3)
                     App.state.setPizzaSelected(pizzaName, pizza3, price)
                     break
@@ -257,6 +234,19 @@
             }else{
                 removeArray(currentTopping, name)
             }
+        }
+        const getNewprice = (toppingName) =>{
+            const new_price = []
+            const allToppings= App.state.toppings
+                toppingName.forEach((e)=>{
+                    allToppings.filter(obj =>{
+                        if(obj.name === e){
+                            new_price.push(obj.price)
+                        }
+                    })
+                })
+                return new_price
+
         }
         const removeArray = (array, item)=>{
                     // get index of item to splice
